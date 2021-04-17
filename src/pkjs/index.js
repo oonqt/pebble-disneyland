@@ -1,74 +1,52 @@
-require('pebblejs');
+require('pebblejs'); // Must require this or build error moment
 var UI = require('pebblejs/ui');
 var ajax = require('pebblejs/lib/ajax');
-var Vector2 = require('pebblejs/lib/vector2');
 var Feature = require('pebblejs/platform/feature');
 
-// var stringify = require('json-stringify-safe'); // elements and some other things got circular dependencies which JSON.stringify doesnt like
+var API_BASE = 'https://disney-wait.memester.xyz';
 
 var loadingScreen = new UI.Card({
+    status: {
+        backgroundColor: Feature.color(0x00AAFF, 'white'),
+        separator: 'none'
+    },
     title: 'Loading...',
-    body: 'Please hold for a moment while I fetch the ride data'
 });
 
 var errorScreen = new UI.Card({
+    status: {
+        backgroundColor: Feature.color(0x00AAFF, 'white'),
+        separator: 'none'
+    },
     title: 'Error!',
-    body: 'Something bad happened.. If this continues, please contact the developer.'
+    body: 'Something bad happened.. If this continues, please contact the developer.',
+});
+
+var attractionList = new UI.Menu({
+    status: {
+        backgroundColor: Feature.color(0x00AAFF, 'white'),
+        separator: 'none'
+    },
+    highlightBackgroundColor: Feature.color(0x00AAFF, 'black'),
+    highlightTextColor: Feature.color('black', 'white'),
+    sections: [{ items: [] }]
 });
 
 var parkSelectionMenu = new UI.Menu({
     status: {
-        backgroundColor: 0x00AAFF,
-        separator: Feature.round('none', 'dotted')
+        backgroundColor: Feature.color(0x00AAFF, 'white'),
+        separator: 'none'
     },  
-    highlightBackgroundColor: 0x00AAFF,
-    highlightTextColor: 'black',
-    sections: [
-        {
-            items: [
-                {
-                    title: 'Disneyland',
-                    icon: 'PALACE_ICON'
-                },
-                {
-                    title: 'California Adventure',
-                    icon: 'CALIFORNIA_ICON'
-                }
-            ]
-        }
-    ]
-});
-
-var attractionList = new UI.Menu({
-    backgroundColor: {
-        color: 0x00AAFF,
-        separator: Feature.round('none', 'dotted')
-    },
-    highlightBackgroundColor: 0x00AAFF,
-    highlightTextColor: 'black',
-    sections: [
-        {
-            items: []
-        }
-    ]
+    highlightBackgroundColor: Feature.color(0x00AAFF, 'black'),
+    highlightTextColor: Feature.color('black', 'white'),
+    sections: [{ items: [] }]
 });
 
 parkSelectionMenu.on('select', function(e) {
-    var parkType;
-
-    switch (e.itemIndex) {
-        case 0:
-            parkType = 'disneyland';
-            break;
-        case 1:
-            parkType = 'californiaadventure';
-            break;
-    }
-
     loadingScreen.show();
 
     ajax({
-        url: 'https://disney-wait.memester.xyz/rideTimes?park=' + parkType,
+        url: API_BASE + '/rideTimes?park=' + e.item.title.toLowerCase().split(' ').join(''), // as per our api, all park types will be lowercase with no spaces.. Maybe I should just not do this because its inconsistent.. doesnt matter, too lazy to deploy another API change..
         type: 'json'
     }, function(data) {
         loadingScreen.hide();
@@ -85,13 +63,37 @@ parkSelectionMenu.on('select', function(e) {
         }
 
         attractionList.items(0, attractions);
-        
         attractionList.show();
     }, function(err) {
-        console.error(err);
+        console.log(err);
         loadingScreen.hide();
         errorScreen.show();
     });
 });
 
-parkSelectionMenu.show();
+
+loadingScreen.show();
+
+ajax({
+    url: API_BASE + '/parks',
+    type: 'json'
+}, function(data) {
+    var parks = [];
+
+    for (var i = 0; i < data.length; i++) {
+        var park = data[i];
+
+        parks.push({
+            title: park.name,
+            subtitle: park.closed ? 'Closed' : park.opening + ' - ' + park.closing
+        });
+    }
+
+    loadingScreen.hide();
+    parkSelectionMenu.items(0, parks);
+    parkSelectionMenu.show();
+}, function(err) {
+    console.log(err);
+    loadingScreen.hide();
+    errorScreen.show();
+});

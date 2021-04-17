@@ -34,11 +34,6 @@
           "name": "PALACE_ICON",
           "file": "images/palace_25px.png",
           "menuIcon": true
-        },
-        {
-          "type": "png",
-          "name": "CALIFORNIA_ICON",
-          "file": "images/california_25px.png"
         }
       ]
     }

@@ -7,10 +7,11 @@
   ],
   "private": true,
   "dependencies": {
+    "json-stringify-safe": "^5.0.1",
     "pebblejs": "^1.0.0"
   },
   "pebble": {
-    "displayName": "Pebble Disneyland",
+    "displayName": "Disneyland Wait Times",
     "uuid": "0ace6a53-c03a-42ff-8956-ca62abe1b737",
     "sdkVersion": "3",
     "enableMultiJS": true,
@@ -27,7 +28,19 @@
       "dummy"
     ],
     "resources": {
-      "media": []
+      "media": [
+        {
+          "type": "png",
+          "name": "PALACE_ICON",
+          "file": "images/palace_25px.png",
+          "menuIcon": true
+        },
+        {
+          "type": "png",
+          "name": "CALIFORNIA_ICON",
+          "file": "images/california_25px.png"
+        }
+      ]
     }
   }
 }

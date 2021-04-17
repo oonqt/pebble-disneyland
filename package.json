@@ -1,0 +1,33 @@
+{
+  "name": "pebble-disneyland",
+  "author": "JSystems",
+  "version": "1.0.0",
+  "keywords": [
+    "pebble-app"
+  ],
+  "private": true,
+  "dependencies": {
+    "pebblejs": "^1.0.0"
+  },
+  "pebble": {
+    "displayName": "Pebble Disneyland",
+    "uuid": "0ace6a53-c03a-42ff-8956-ca62abe1b737",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite"
+    ],
+    "watchapp": {
+      "watchface": false
+    },
+    "messageKeys": [
+      "dummy"
+    ],
+    "resources": {
+      "media": []
+    }
+  }
+}
